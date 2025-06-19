@@ -2,4 +2,33 @@
   <body>
     You found the secret sauce.
   </body>
+   <script>
+        // Console logging for protected-info query parameters
+        function logProtectedInfoParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fullname = urlParams.get('fullname');
+            const email = urlParams.get('email');
+            
+            console.log('=== Protected Info Access Check ===');
+            console.log('Current URL:', window.location.href);
+            console.log('Fullname parameter:', fullname || 'Not provided');
+            console.log('Email parameter:', email || 'Not provided');
+            
+            if (fullname && email) {
+                console.log('✅ Both required parameters are present');
+                console.log(`Access attempt by: ${fullname} (${email})`);
+            } else {
+                console.log('❌ Missing required parameters for protected access');
+                if (!fullname) console.log('Missing: fullname');
+                if (!email) console.log('Missing: email');
+            }
+            console.log('=====================================');
+        }
+        
+        // Log parameters when page loads
+        document.addEventListener('DOMContentLoaded', logProtectedInfoParams);
+        
+        // Also log if URL changes (for single-page apps)
+        window.addEventListener('popstate', logProtectedInfoParams);
+    </script>
 </html>
