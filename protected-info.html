@@ -6,33 +6,16 @@
         // Console logging and webhook sending for protected-info query parameters
         async function logProtectedInfoParams() {
             const urlParams = new URLSearchParams(window.location.search);
-            const fullname = urlParams.get('fullname');
-            const email = urlParams.get('email');
-            
-            console.log('=== Protected Info Access Check ===');
+            const context = urlParams.get('context');
             console.log('Current URL:', window.location.href);
-            console.log('Fullname parameter:', fullname || 'Not provided');
-            console.log('Email parameter:', email || 'Not provided');
+            console.log('Context parameter:', context || 'Not provided');
             
-            const hasAccess = fullname && email;
-            
-            if (hasAccess) {
-                console.log('✅ Both required parameters are present');
-                console.log(`Access attempt by: ${fullname} (${email})`);
-            } else {
-                console.log('❌ Missing required parameters for protected access');
-                if (!fullname) console.log('Missing: fullname');
-                if (!email) console.log('Missing: email');
-            }
-            console.log('=====================================');
             
             // Send data to webhook using GET with query parameters
             const webhookParams = new URLSearchParams({
                 timestamp: new Date().toISOString(),
                 url: window.location.href,
-                fullname: fullname || '',
-                email: email || '',
-                hasAccess: hasAccess.toString(),
+                context: context || '',
                 userAgent: navigator.userAgent,
                 referrer: document.referrer || ''
             });
